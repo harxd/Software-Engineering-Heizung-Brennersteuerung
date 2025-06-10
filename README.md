@@ -73,6 +73,7 @@ Module: `sensor`, `control`, `safety`, `burner`, `ui`
 ### Implementierung
 - Programmiersprache: Python
 - Git für Versionskontrolle (öffentlich auf GitHub)
+- Branches für Iterationen
 - pytest für Unit-Tests (leichter als unittest)
 - draw.io für Architektur/Diagramme
 
