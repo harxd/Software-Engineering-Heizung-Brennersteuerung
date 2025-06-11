@@ -1,0 +1,61 @@
+import tkinter as tk
+from tkinter import ttk
+
+class HeatingControlGUI:
+    def __init__(self, controller):
+        self.controller = controller
+        self.root = tk.Tk()
+        self.root.title("Heizung – Brennersteuerung")
+        self.root.geometry("200x175")
+        
+        # Create main frame
+        main_frame = ttk.Frame(self.root, padding="10")
+        main_frame.grid(row=0, column=0, sticky="nsew")
+        
+        # Temperature display
+        ttk.Label(main_frame, text="Ist-Temperatur:", font=('Arial', 12)).grid(row=0, column=0, pady=5)
+        self.current_temp_var = tk.StringVar(value="--.-°C")
+        ttk.Label(main_frame, textvariable=self.current_temp_var, font=('Arial', 12, 'bold')).grid(row=0, column=1, pady=5)
+        
+        # Target temperature controls
+        ttk.Label(main_frame, text="Soll-Temperatur:", font=('Arial', 12)).grid(row=1, column=0, pady=5)
+        self.target_temp_var = tk.StringVar(value=f"{controller.target_temperature:.1f}°C")
+        ttk.Label(main_frame, textvariable=self.target_temp_var, font=('Arial', 12, 'bold')).grid(row=1, column=1, pady=5)
+        
+        # Temperature adjustment buttons
+        temp_button_frame = ttk.Frame(main_frame)
+        temp_button_frame.grid(row=2, column=0, columnspan=2, pady=10)
+        
+        ttk.Button(temp_button_frame, text="-", command=self.decrease_temp, width=5).grid(row=0, column=0, padx=5)
+        ttk.Button(temp_button_frame, text="+", command=self.increase_temp, width=5).grid(row=0, column=1, padx=5)
+        
+        # Burner status
+        ttk.Label(main_frame, text="Brenner:", font=('Arial', 12)).grid(row=3, column=0, pady=15)
+        self.burner_status_var = tk.StringVar(value="AUS")
+        self.status_label = ttk.Label(main_frame, textvariable=self.burner_status_var, font=('Arial', 12, 'bold'))
+        self.status_label.grid(row=3, column=1, pady=15)
+        
+        # Configure grid weights
+        main_frame.columnconfigure(1, weight=1)
+        
+    def increase_temp(self):
+        self.controller.target_temperature += 0.5
+        self.update_target_temp_display()
+        
+    def decrease_temp(self):
+        self.controller.target_temperature -= 0.5
+        self.update_target_temp_display()
+        
+    def update_target_temp_display(self):
+        self.target_temp_var.set(f"{self.controller.target_temperature:.1f}°C")
+        
+    def update_current_temp(self, temp):
+        self.current_temp_var.set(f"{temp:.1f}°C")
+        
+    def update_burner_status(self, status):
+        status_text = "EIN" if status == "ON" else "AUS"
+        self.burner_status_var.set(status_text)
+        self.status_label.configure(foreground='red' if status == "ON" else 'black')
+        
+    def start(self):
+        self.root.mainloop()
