@@ -6,7 +6,7 @@
 
 Iteration 1: Branch Iteration-1 pullen <br>
 Iteration 2: Branch Iteration-2 pullen <br>
-Iteration 3: Branch main pullen <br>
+Iteration 3: Branch Iteration-3 oder main pullen <br>
 
 Kommandozeile im Projektordner: <br>
 `python main.py`
