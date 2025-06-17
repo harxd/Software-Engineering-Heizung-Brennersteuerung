@@ -1,5 +1,21 @@
 # Software Engineering, Heizung – Brennersteuerung
 
+## Anwendung
+
+### Ausführen der Anwendung
+
+Iteration 1: Branch iteration-1 pullen
+Iteration 2: Branch iteration-2 pullen
+Iteration 3: Branch iteration-3 pullen
+
+Kommandozeile im Projektordner:
+`python main.py`
+
+### Tests
+
+Kommandozeile in Projektordner:
+`pytest tests/`
+
 
 ## Genereller Plan
 
@@ -28,7 +44,7 @@ Einfaches GUI zur Anzeige und Einstellung von Parametern
   - Visualisierung
 - Iteration 3
   - Vollständige UI
-  - Tests
+  - Logger
 
 
 ## Phasen des Software Engineering
