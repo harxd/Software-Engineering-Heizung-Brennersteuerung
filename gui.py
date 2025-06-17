@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk  # Pillow library required
 
 class HeatingControlGUI:
     def __init__(self, controller):
         self.controller = controller
         self.root = tk.Tk()
         self.root.title("Heizung – Brennersteuerung")
-        self.root.geometry("200x175")
+        self.root.geometry("200x200")
         
         # Create main frame
         main_frame = ttk.Frame(self.root, padding="10")
@@ -29,11 +30,13 @@ class HeatingControlGUI:
         ttk.Button(temp_button_frame, text="-", command=self.decrease_temp, width=5).grid(row=0, column=0, padx=5)
         ttk.Button(temp_button_frame, text="+", command=self.increase_temp, width=5).grid(row=0, column=1, padx=5)
         
-        # Burner status
+        # Burner status image
         ttk.Label(main_frame, text="Brenner:", font=('Arial', 12)).grid(row=3, column=0, pady=15)
-        self.burner_status_var = tk.StringVar(value="AUS")
-        self.status_label = ttk.Label(main_frame, textvariable=self.burner_status_var, font=('Arial', 12, 'bold'))
-        self.status_label.grid(row=3, column=1, pady=15)
+        # Load images (ensure these files exist in your project directory)
+        self.burner_img_off = ImageTk.PhotoImage(Image.open("burner_off.png").resize((48, 48)))
+        self.burner_img_on = ImageTk.PhotoImage(Image.open("burner_on.png").resize((48, 48)))
+        self.burner_img_label = ttk.Label(main_frame, image=self.burner_img_off)
+        self.burner_img_label.grid(row=3, column=1, pady=15)
         
         # Configure grid weights
         main_frame.columnconfigure(1, weight=1)
@@ -53,9 +56,13 @@ class HeatingControlGUI:
         self.current_temp_var.set(f"{temp:.1f}°C")
         
     def update_burner_status(self, status):
-        status_text = "EIN" if status == "ON" else "AUS"
-        self.burner_status_var.set(status_text)
-        self.status_label.configure(foreground='red' if status == "ON" else 'black')
+        # Use images instead of text
+        if status == "ON":
+            self.burner_img_label.configure(image=self.burner_img_on)
+            self.burner_img_label.image = self.burner_img_on
+        else:
+            self.burner_img_label.configure(image=self.burner_img_off)
+            self.burner_img_label.image = self.burner_img_off
         
     def start(self):
         self.root.mainloop()
