@@ -4,16 +4,16 @@
 
 ### Ausführen der Anwendung
 
-Iteration 1: Branch iteration-1 pullen
-Iteration 2: Branch iteration-2 pullen
-Iteration 3: Branch iteration-3 pullen
+Iteration 1: Branch iteration-1 pullen <br>
+Iteration 2: Branch iteration-2 pullen <br>
+Iteration 3: Branch iteration-3 pullen <br>
 
-Kommandozeile im Projektordner:
+Kommandozeile im Projektordner: <br>
 `python main.py`
 
 ### Tests
 
-Kommandozeile in Projektordner:
+Kommandozeile in Projektordner: <br>
 `pytest tests/`
 
 
