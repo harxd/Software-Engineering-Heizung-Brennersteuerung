@@ -35,7 +35,7 @@ class HeatingControlGUI:
         # Load images (ensure these files exist in your project directory)
         self.burner_img_off = ImageTk.PhotoImage(Image.open("burner_off.png").resize((48, 48)))
         self.burner_img_on = ImageTk.PhotoImage(Image.open("burner_on.png").resize((48, 48)))
-        self.burner_img_label = ttk.Label(main_frame, image=self.burner_img_off)
+        self.burner_img_label = tk.Label(main_frame, image=self.burner_img_off)
         self.burner_img_label.grid(row=3, column=1, pady=15)
         
         # Configure grid weights
@@ -59,10 +59,10 @@ class HeatingControlGUI:
         # Use images instead of text
         if status == "ON":
             self.burner_img_label.configure(image=self.burner_img_on)
-            self.burner_img_label.image = self.burner_img_on
+            self.current_burner_img = self.burner_img_on  # Keep a reference
         else:
             self.burner_img_label.configure(image=self.burner_img_off)
-            self.burner_img_label.image = self.burner_img_off
+            self.current_burner_img = self.burner_img_off  # Keep a reference
         
     def start(self):
         self.root.mainloop()
