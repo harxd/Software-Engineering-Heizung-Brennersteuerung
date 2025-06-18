@@ -1,3 +1,4 @@
+import logging
 from sensor import TemperatureSensor
 from control import TemperatureController
 from burner import Burner
@@ -6,29 +7,49 @@ from safety import SafetySystem
 import time
 import threading
 
+# Logger setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S"
+)
+logger = logging.getLogger("Heizung")
 
 def update_gui(gui, sensor, controller, burner, safety):
     """Update GUI with current system status"""
+    last_burner_status = burner.status()
+    last_emergency = False
     while True:
         current_temp = sensor.get_temperature(burner.is_on)
 
         # Safety-Check
         if safety.check(current_temp):
+            if not last_emergency:
+                logger.warning(f"EMERGENCY: {safety.last_error}")
+                last_emergency = True
             burner.switch_off()
             gui.update_emergency_status(True, safety.last_error)
         else:
+            if last_emergency:
+                logger.info("Emergency cleared or reset.")
+                last_emergency = False
             gui.update_emergency_status(False)
             if controller.check_temperature(current_temp):
                 burner.switch_on()
             else:
                 burner.switch_off()
 
+        # Log burner status change
+        current_burner_status = burner.status()
+        if current_burner_status != last_burner_status:
+            logger.info(f"Burner switched {'ON' if current_burner_status == 'ON' else 'OFF'}")
+            last_burner_status = current_burner_status
+
         # Update GUI elements
         gui.update_current_temp(current_temp)
         gui.update_burner_status(burner.status())
         
         time.sleep(0.1)
-
 
 def main():
     # Initialize components
@@ -48,7 +69,6 @@ def main():
     
     # Start GUI main loop
     gui.start()
-
 
 if __name__ == "__main__":
     main()
