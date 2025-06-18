@@ -3,11 +3,15 @@ from tkinter import ttk
 from PIL import Image, ImageTk  # Pillow library required
 
 class HeatingControlGUI:
-    def __init__(self, controller):
+    def __init__(self, controller, safety=None):
         self.controller = controller
+        self.safety = safety  # Referenz auf SafetySystem für Reset
         self.root = tk.Tk()
         self.root.title("Heizung – Brennersteuerung")
-        self.root.geometry("200x200")
+        self.root.geometry("250x370")  # GUI etwas länger gemacht
+        
+        # Einheitliches Button-Font
+        self.button_font = ('Arial', 12, 'bold')
         
         # Create main frame
         main_frame = ttk.Frame(self.root, padding="10")
@@ -27,19 +31,38 @@ class HeatingControlGUI:
         temp_button_frame = ttk.Frame(main_frame)
         temp_button_frame.grid(row=2, column=0, columnspan=2, pady=10)
         
-        ttk.Button(temp_button_frame, text="-", command=self.decrease_temp, width=5).grid(row=0, column=0, padx=5)
-        ttk.Button(temp_button_frame, text="+", command=self.increase_temp, width=5).grid(row=0, column=1, padx=5)
+        ttk.Button(temp_button_frame, text="-", command=self.decrease_temp, width=5, style="TButton").grid(row=0, column=0, padx=5)
+        ttk.Button(temp_button_frame, text="+", command=self.increase_temp, width=5, style="TButton").grid(row=0, column=1, padx=5)
         
         # Burner status image
-        ttk.Label(main_frame, text="Brenner:", font=('Arial', 12)).grid(row=3, column=0, pady=15)
-        # Load images (ensure these files exist in your project directory)
+        ttk.Label(main_frame, text="Brenner:", font=('Arial', 12)).grid(row=3, column=0, pady=10)
         self.burner_img_off = ImageTk.PhotoImage(Image.open("burner_off.png").resize((48, 48)))
         self.burner_img_on = ImageTk.PhotoImage(Image.open("burner_on.png").resize((48, 48)))
         self.burner_img_label = tk.Label(main_frame, image=self.burner_img_off)
-        self.burner_img_label.grid(row=3, column=1, pady=15)
+        self.burner_img_label.grid(row=3, column=1, pady=10)
+        
+        # Emergency status image
+        ttk.Label(main_frame, text="Not-Aus:", font=('Arial', 12)).grid(row=4, column=0, pady=10)
+        self.siren_img_off = ImageTk.PhotoImage(Image.open("emergency_off.png").resize((48, 48)))
+        self.siren_img_on = ImageTk.PhotoImage(Image.open("emergency_on.png").resize((48, 48)))
+        self.siren_img_label = tk.Label(main_frame, image=self.siren_img_off)
+        self.siren_img_label.grid(row=4, column=1, pady=10)
+        
+        # Optional: Error message
+        self.error_var = tk.StringVar(value="")
+        self.error_label = ttk.Label(main_frame, textvariable=self.error_var, foreground="red", font=('Arial', 10, 'bold'))
+        self.error_label.grid(row=5, column=0, columnspan=2, pady=5)
+
+        # Notüberbrückung Button
+        self.reset_button = ttk.Button(main_frame, text="Notüberbrückung", command=self.reset_emergency, state="disabled", style="TButton")
+        self.reset_button.grid(row=6, column=0, columnspan=2, pady=20)
         
         # Configure grid weights
         main_frame.columnconfigure(1, weight=1)
+
+        # Style für alle Buttons setzen
+        style = ttk.Style()
+        style.configure("TButton", font=self.button_font)
         
     def increase_temp(self):
         self.controller.target_temperature += 0.5
@@ -56,13 +79,30 @@ class HeatingControlGUI:
         self.current_temp_var.set(f"{temp:.1f}°C")
         
     def update_burner_status(self, status):
-        # Use images instead of text
         if status == "ON":
             self.burner_img_label.configure(image=self.burner_img_on)
-            self.current_burner_img = self.burner_img_on  # Keep a reference
+            self.current_burner_img = self.burner_img_on
         else:
             self.burner_img_label.configure(image=self.burner_img_off)
-            self.current_burner_img = self.burner_img_off  # Keep a reference
+            self.current_burner_img = self.burner_img_off
+
+    def update_emergency_status(self, emergency, error_msg=None):
+        if emergency:
+            self.siren_img_label.configure(image=self.siren_img_on)
+            self.current_siren_img = self.siren_img_on
+            if error_msg:
+                self.error_var.set(error_msg)
+            self.reset_button.config(state="normal")
+        else:
+            self.siren_img_label.configure(image=self.siren_img_off)
+            self.current_siren_img = self.siren_img_off
+            self.error_var.set("")
+            self.reset_button.config(state="disabled")
         
+    def reset_emergency(self):
+        if self.safety:
+            self.safety.reset()
+            self.update_emergency_status(False)
+
     def start(self):
         self.root.mainloop()

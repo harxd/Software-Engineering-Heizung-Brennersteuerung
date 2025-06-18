@@ -15,8 +15,9 @@ def update_gui(gui, sensor, controller, burner, safety):
         # Safety-Check
         if safety.check(current_temp):
             burner.switch_off()
-            # Optional: GUI könnte hier eine Warnung anzeigen
+            gui.update_emergency_status(True, safety.last_error)
         else:
+            gui.update_emergency_status(False)
             if controller.check_temperature(current_temp):
                 burner.switch_on()
             else:
@@ -25,7 +26,6 @@ def update_gui(gui, sensor, controller, burner, safety):
         # Update GUI elements
         gui.update_current_temp(current_temp)
         gui.update_burner_status(burner.status())
-        # Optional: Fehlerstatus an GUI übergeben, z.B. gui.update_safety_status(safety.last_error)
         
         time.sleep(0.1)
 
@@ -37,8 +37,8 @@ def main():
     burner = Burner()
     safety = SafetySystem(max_temp=95.0)
     
-    # Create and setup GUI
-    gui = HeatingControlGUI(controller)
+    # Create and setup GUI (safety als Referenz übergeben)
+    gui = HeatingControlGUI(controller, safety=safety)
     
     # Start update thread
     update_thread = threading.Thread(target=update_gui, 

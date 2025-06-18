@@ -12,6 +12,10 @@ class SafetySystem:
         Prüft auf Übertemperatur und Sensorfehler.
         Gibt True zurück, wenn ein Not-Aus ausgelöst werden muss.
         """
+        # Wenn Not-Aus einmal ausgelöst wurde, bleibt er aktiv
+        if self.emergency_shutdown:
+            return True
+
         # Sensorfehler: None oder kein float/int
         if current_temp is None or not isinstance(current_temp, (float, int)):
             self.emergency_shutdown = True
@@ -25,7 +29,6 @@ class SafetySystem:
             return True
 
         # Alles ok
-        self.emergency_shutdown = False
         self.last_error = None
         return False
 
