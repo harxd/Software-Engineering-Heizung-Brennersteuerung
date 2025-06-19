@@ -2,19 +2,23 @@ import pytest
 from control import TemperatureController
 
 def test_target_temperature_setting():
-    """REQ-F02: Test target temperature setting"""
+    """
+    REQ-F02: Testet das Setzen der Soll-Temperatur.
+    """
     controller = TemperatureController(target_temp=22.0)
     assert controller.target_temperature == 22.0
 
 def test_burner_control_logic():
-    """REQ-F03: Test automated burner control logic"""
+    """
+    REQ-F03: Testet die Steuerlogik für das automatische Schalten des Brenners.
+    """
     controller = TemperatureController(target_temp=22.0)
     
-    # Test below target temperature
-    assert controller.check_temperature(21.0) == True  # Should turn ON
+    # Test: Temperatur unter Sollwert
+    assert controller.check_temperature(21.0) is True  # Brenner AN
     
-    # Test at target temperature
-    assert controller.check_temperature(22.0) == False  # Should turn OFF
+    # Test: Temperatur gleich Sollwert
+    assert controller.check_temperature(22.0) is False  # Brenner AUS
     
-    # Test above target temperature
-    assert controller.check_temperature(23.0) == False  # Should turn OFF
+    # Test: Temperatur über Sollwert
+    assert controller.check_temperature(23.0) is False  # Brenner AUS

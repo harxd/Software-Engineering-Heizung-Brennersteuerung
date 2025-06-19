@@ -1,14 +1,22 @@
 class TemperatureController:
     """
-    Controls the system by comparing the target temperature with the current temperature.
+    Regelt das System, indem die Soll- mit der Ist-Temperatur verglichen wird.
     """
+
     def __init__(self, target_temp: float):
+        """
+        Initialisiert den Controller mit einer Soll-Temperatur.
+        
+        :param target_temp: Die gewünschte Soll-Temperatur in Grad Celsius.
+        """
         self.target_temperature = target_temp
 
     def check_temperature(self, current_temp: float) -> bool:
         """
-        Compares the target and current temperatures.
-        Returns True to turn the burner ON, otherwise False.
+        Vergleicht Soll- und Ist-Temperatur.
+        Gibt True zurück, wenn der Brenner eingeschaltet werden soll (Ist < Soll).
+        
+        :param current_temp: Die aktuelle Temperatur in Grad Celsius.
+        :return: True, wenn Brenner AN, sonst False.
         """
-        # Turn on burner if current temperature is below target
         return current_temp < self.target_temperature

@@ -33,6 +33,7 @@ ENV/
 *.swp
 *.swo
 .vs/
+.idea/vcs.xml
 
 # Local development settings
 *.env
