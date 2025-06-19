@@ -20,13 +20,13 @@ def test_temperature_changes():
     
     # Test: Kühlen
     temp2 = sensor.get_temperature(burner_is_on=False)
-    assert temp2 < temp1
+    assert temp2 <= temp1  # Temperatur kann gleich bleiben, falls Minimum erreicht
 
 def test_minimum_temperature():
     """
-    REQ-F01: Testet das Temperaturminimum (Sensor darf nicht unter 10°C fallen).
+    REQ-F01: Testet das Temperaturminimum (Sensor darf nicht unter 5°C fallen).
     """
-    sensor = TemperatureSensor(initial_temp=10.5)
-    for _ in range(10):  # Mehrere Kühlzyklen simulieren
+    sensor = TemperatureSensor(initial_temp=5.1)
+    for _ in range(20):  # Mehrere Kühlzyklen simulieren
         temp = sensor.get_temperature(burner_is_on=False)
     assert temp >= 5.0  # Sollte nie unter das Minimum fallen
